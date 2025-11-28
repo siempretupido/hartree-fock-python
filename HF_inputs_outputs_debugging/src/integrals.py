@@ -85,12 +85,3 @@ def build_Fock(Hcore, J, K):
     """
     return Hcore + J - 0.5 * K
 
-def do_first_scf_iteration(P, Hcore, eri, S_inv_sqrt, nelec):
-    J=build_J(P,eri)
-    K=build_K(P,eri)
-    F=build_Fock(Hcore,J,K)
-    Fprime=S_inv_sqrt.T@F@S_inv_sqrt
-    eps,Cprime =np.linalg.eigh(Fprime)
-    C=S_inv_sqrt@Cprime
-    P_new=compute_P(C,nelec)
-    return F,C,P_new,eps
