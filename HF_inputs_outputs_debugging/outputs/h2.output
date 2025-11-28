@@ -1,0 +1,66 @@
+ Output from the Test HF code based on the notes + integrals
+Based on input, the charge, number of electrons and n. occ orbs is:   0  2  1
+Nuclear repulsion energy:     0.7143320881
+Successfully read overlap integrals from extended input file. N integrals:    3
+Successfully read kinetic integrals from extended input file. N integrals:    3
+Successfully read VNe integrals from extended input file. N integrals:    3
+Successfully read two-electron integrals from extended input file. N integrals:    6
+ Checking Overlap Integrals. Largest difference from reference is:
+  0.000000000055
+ Checking Kinetic Integrals. Largest difference from reference is:
+  0.000000000168
+ Checking Nuclear-Electronic Integrals. Largest difference from reference is:
+  0.000000000220
+ Checking Two-electron Integrals. Largest difference from reference is:
+  0.000000000154
+ Checking Overlap Integral derivatives. Largest difference from reference is:
+  0.000000004628
+ Checking Kinetic Integral derivatives. Largest difference from reference is:
+  0.000000002264
+ Checking Nuclear-Electronic Integral derivs. Largest difference from reference is:
+  0.000000004807
+ VNe derivative elements:
+    1    1      1    0.00000000    0.00000000   -0.34328135
+    1    1      2    0.00000000    0.00000000    0.34328135
+    1    2      1    0.00000000    0.00000000   -0.93650085
+    1    2      2    0.00000000    0.00000000    0.93650085
+    2    2      1    0.00000000    0.00000000   -0.34328135
+    2    2      2    0.00000000    0.00000000    0.34328135
+ Checking Two-electron Integral derivs. Largest difference from reference is:
+  0.000000001736
+ Starting the SCF calculation.
+ Eigenvalues of overlap matrix:
+    0.340650    1.659350
+ Inverse square root of S:
+    1.244825   -0.468523
+   -0.468523    1.244825
+ First set of orbital coeffs: 
+    0.548929    0.548929
+   -1.211520    1.211520
+ First density matrix: 
+    0.602646    0.602646
+    0.602646    0.602646
+ Starting SCF cycles with maximum number of cycles:           30
+ Required maximum change in density matrix:    9.9999999999999995E-007
+ Cycle  ;  Max Delta P  ;      Eelec    ;   Etot
+   1       0.0000000000       0.0000000000       0.7143320881
+   2       0.0000000000      -1.8310489973      -1.1167169092
+ SCF has converged
+ Gradient from kinetic energy term
+    0.00000000    0.00000000    0.38003409
+    0.00000000    0.00000000   -0.38003409
+ Gradient from nucleus-electrons energy term
+    0.00000000    0.00000000   -1.54251056
+    0.00000000    0.00000000    1.54251056
+ Gradient from overlap term
+    0.00000000    0.00000000    0.24129681
+    0.00000000    0.00000000   -0.24129681
+ Gradient from 2-electron term
+    0.00000000    0.00000000    0.38249909
+    0.00000000    0.00000000   -0.38249909
+ Nuclear repulsion gradient
+    0.00000000    0.00000000    0.51027033
+    0.00000000    0.00000000   -0.51027033
+ Overall Gradient 
+    0.00000000    0.00000000   -0.02841024
+    0.00000000    0.00000000    0.02841024

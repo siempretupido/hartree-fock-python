@@ -1,0 +1,55 @@
+ Output from the Test HF code based on the notes + integrals
+Based on input, the charge, number of electrons and n. occ orbs is:   0  2  1
+Nuclear repulsion energy:     0.7143320881
+Successfully read overlap integrals from extended input file. N integrals:   10
+Successfully read kinetic integrals from extended input file. N integrals:   10
+Successfully read VNe integrals from extended input file. N integrals:   10
+Successfully read two-electron integrals from extended input file. N integrals:   55
+ Starting the SCF calculation.
+ Eigenvalues of overlap matrix:
+    0.096393    0.470183    0.595202    2.838222
+ Inverse square root of S:
+    1.293578   -0.501560   -0.194707    0.075354
+   -0.501560    1.990935    0.075354   -1.037863
+   -0.194707    0.075354    1.293578   -0.501560
+    0.075354   -1.037863   -0.501560    1.990935
+ First set of orbital coeffs: 
+   -0.439069   -0.165008   -0.439069   -0.165008
+   -0.395125   -1.328284    0.395125    1.328284
+    0.708380   -0.719563    0.708380   -0.719563
+   -1.057254    1.728839    1.057254   -1.728839
+ First density matrix: 
+    0.385563    0.144900    0.385563    0.144900
+    0.144900    0.054455    0.144900    0.054455
+    0.385563    0.144900    0.385563    0.144900
+    0.144900    0.054455    0.144900    0.054455
+ Starting SCF cycles with maximum number of cycles:           30
+ Required maximum change in density matrix:    9.9999999999999995E-007
+ Cycle  ;  Max Delta P  ;      Eelec    ;   Etot
+   1       0.1477983752       0.0000000000       0.7143320881
+   2       0.0206090630      -1.8397804836      -1.1254483954
+   3       0.0030251237      -1.8410464171      -1.1267143290
+   4       0.0004490653      -1.8410748884      -1.1267428003
+   5       0.0000667796      -1.8410755200      -1.1267434318
+   6       0.0000099333      -1.8410755340      -1.1267434458
+   7       0.0000014776      -1.8410755343      -1.1267434461
+   8       0.0000002198      -1.8410755343      -1.1267434461
+ SCF has converged
+ Gradient from kinetic energy term
+    0.00000000    0.00000000    0.35019485
+    0.00000000    0.00000000   -0.35019485
+ Gradient from nucleus-electrons energy term
+    0.00000000    0.00000000   -1.45231068
+    0.00000000    0.00000000    1.45231068
+ Gradient from overlap term
+    0.00000000    0.00000000    0.23394665
+    0.00000000    0.00000000   -0.23394665
+ Gradient from 2-electron term
+    0.00000000    0.00000000    0.34975591
+    0.00000000    0.00000000   -0.34975591
+ Nuclear repulsion gradient
+    0.00000000    0.00000000    0.51027033
+    0.00000000    0.00000000   -0.51027033
+ Overall Gradient 
+    0.00000000    0.00000000   -0.00814294
+    0.00000000    0.00000000    0.00814294

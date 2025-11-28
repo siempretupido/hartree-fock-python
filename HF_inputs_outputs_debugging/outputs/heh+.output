@@ -1,0 +1,47 @@
+ Output from the Test HF code based on the notes + integrals
+Based on input, the charge, number of electrons and n. occ orbs is:   1  2  1
+Nuclear repulsion energy:     1.1759493576
+Successfully read overlap integrals from extended input file. N integrals:    3
+Successfully read kinetic integrals from extended input file. N integrals:    3
+Successfully read VNe integrals from extended input file. N integrals:    3
+Successfully read two-electron integrals from extended input file. N integrals:    6
+ Starting the SCF calculation.
+ Eigenvalues of overlap matrix:
+    0.547130    1.452870
+ Inverse square root of S:
+    1.090783   -0.261149
+   -0.261149    1.090783
+ First set of orbital coeffs: 
+   -0.985524   -0.031115
+    0.535488   -1.121177
+ First density matrix: 
+    1.942516    0.061329
+    0.061329    0.001936
+ Starting SCF cycles with maximum number of cycles:           30
+ Required maximum change in density matrix:    9.9999999999999995E-007
+ Cycle  ;  Max Delta P  ;      Eelec    ;   Etot
+   1       0.2658468953       0.0000000000       1.1759493576
+   2       0.0599546558      -4.0280338622      -2.8520845046
+   3       0.0107548701      -4.0299314121      -2.8539820545
+   4       0.0018387034      -4.0299913021      -2.8540419445
+   5       0.0003116808      -4.0299930469      -2.8540436894
+   6       0.0000527564      -4.0299930971      -2.8540437395
+   7       0.0000089276      -4.0299930985      -2.8540437409
+   8       0.0000015107      -4.0299930985      -2.8540437410
+   9       0.0000002556      -4.0299930985      -2.8540437410
+ SCF has converged
+ Gradient from kinetic energy term
+    0.00000000    0.00000000    0.18458307
+    0.00000000    0.00000000   -0.18458307
+ Gradient from nucleus-electrons energy term
+    0.00000000    0.00000000   -1.46609436
+    0.00000000    0.00000000    1.46609436
+ Gradient from overlap term
+    0.00000000    0.00000000    0.36629600
+    0.00000000    0.00000000   -0.36629600
+ Gradient from 2-electron term
+    0.00000000    0.00000000    0.36629600
+    0.00000000    0.00000000   -0.36629600
+ Nuclear repulsion gradient
+    0.00000000    0.00000000    0.69142845
+    0.00000000    0.00000000   -0.69142845

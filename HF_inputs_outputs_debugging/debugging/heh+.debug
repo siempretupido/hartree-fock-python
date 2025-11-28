@@ -1,0 +1,177 @@
+Detailed output for debugging simple Hartree-Fock code with gradient calculation.
+ 
+The system contains   2 atoms, and:   2 electrons in   1 orbitals.
+The Overlap Matrix S:
+   1      1.000000      0.452870
+   2      0.452870      1.000000
+Eigenvalues of the Overlap Matrix S:
+   1 -    2      0.547130      1.452870
+Inverse Square Root of Overlap Matrix S^-1/2:
+   1      1.090783     -0.261149
+   2     -0.261149      1.090783
+Core Hamiltonian:
+   1     -2.512352     -1.167366
+   2     -1.167366     -1.589024
+Core Hamiltonian in Orthogonal Basis:
+   1     -2.432520     -0.300250
+   2     -0.300250     -1.396908
+Eigenvalues of the core hamiltonian:
+   1 -    2     -2.513273     -1.316155
+Associated eigenvectors / orbital coefficients:
+   1     -0.985524     -0.031115
+   2      0.535488     -1.121177
+First Density matrix:
+   1      1.942516      0.061329
+   2      0.061329      0.001936
+**** Starting the SCF procedure ****
+*** SCF Cycle ***           1
+Current Fock matrix: F(  1)
+   1     -1.463956     -0.818721
+   2     -0.818721     -0.679683
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.489603     -0.274236
+Following set of orbital coefficients: C(  2)
+   1     -0.915606     -0.162931
+   2      0.647820     -1.109711
+Resulting density matrix: P(  2)
+   1      1.676669      0.298362
+   2      0.298362      0.053093
+Cycle:    1 Delta P, Eelec, Etot:       0.2658468953     -3.9860213574     -2.8100719998
+*** SCF Cycle ***           2
+Current Fock matrix: F(  2)
+   1     -1.495270     -0.867827
+   2     -0.867827     -0.711954
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.532164     -0.255711
+Following set of orbital coefficients: C(  3)
+   1     -0.899087     -0.190685
+   2      0.670558     -1.105280
+Resulting density matrix: P(  3)
+   1      1.616714      0.342885
+   2      0.342885      0.072722
+Cycle:    2 Delta P, Eelec, Etot:       0.0599546558     -4.0280338622     -2.8520845046
+*** SCF Cycle ***           3
+Current Fock matrix: F(  3)
+   1     -1.501847     -0.877384
+   2     -0.877384     -0.718728
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.541030     -0.252752
+Following set of orbital coefficients: C(  4)
+   1     -0.896091     -0.195606
+   2      0.674556     -1.104420
+Resulting density matrix: P(  4)
+   1      1.605959      0.350562
+   2      0.350562      0.076523
+Cycle:    3 Delta P, Eelec, Etot:       0.0107548701     -4.0299314121     -2.8539820545
+*** SCF Cycle ***           4
+Current Fock matrix: F(  4)
+   1     -1.503010     -0.879046
+   2     -0.879046     -0.719926
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.542593     -0.252266
+Following set of orbital coefficients: C(  5)
+   1     -0.895578     -0.196446
+   2      0.675237     -1.104271
+Resulting density matrix: P(  5)
+   1      1.604121      0.351865
+   2      0.351865      0.077182
+Cycle:    4 Delta P, Eelec, Etot:       0.0018387034     -4.0299913021     -2.8540419445
+*** SCF Cycle ***           5
+Current Fock matrix: F(  5)
+   1     -1.503209     -0.879329
+   2     -0.879329     -0.720130
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.542859     -0.252184
+Following set of orbital coefficients: C(  6)
+   1     -0.895491     -0.196588
+   2      0.675353     -1.104246
+Resulting density matrix: P(  6)
+   1      1.603809      0.352085
+   2      0.352085      0.077294
+Cycle:    5 Delta P, Eelec, Etot:       0.0003116808     -4.0299930469     -2.8540436894
+*** SCF Cycle ***           6
+Current Fock matrix: F(  6)
+   1     -1.503242     -0.879376
+   2     -0.879376     -0.720164
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.542904     -0.252170
+Following set of orbital coefficients: C(  7)
+   1     -0.895476     -0.196612
+   2      0.675372     -1.104242
+Resulting density matrix: P(  7)
+   1      1.603756      0.352123
+   2      0.352123      0.077312
+Cycle:    6 Delta P, Eelec, Etot:       0.0000527564     -4.0299930971     -2.8540437395
+*** SCF Cycle ***           7
+Current Fock matrix: F(  7)
+   1     -1.503248     -0.879385
+   2     -0.879385     -0.720170
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.542912     -0.252168
+Following set of orbital coefficients: C(  8)
+   1     -0.895474     -0.196616
+   2      0.675376     -1.104241
+Resulting density matrix: P(  8)
+   1      1.603747      0.352129
+   2      0.352129      0.077316
+Cycle:    7 Delta P, Eelec, Etot:       0.0000089276     -4.0299930985     -2.8540437409
+*** SCF Cycle ***           8
+Current Fock matrix: F(  8)
+   1     -1.503249     -0.879386
+   2     -0.879386     -0.720171
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.542913     -0.252167
+Following set of orbital coefficients: C(  9)
+   1     -0.895474     -0.196617
+   2      0.675376     -1.104241
+Resulting density matrix: P(  9)
+   1      1.603746      0.352130
+   2      0.352130      0.077316
+Cycle:    8 Delta P, Eelec, Etot:       0.0000015107     -4.0299930985     -2.8540437410
+*** SCF Cycle ***           9
+Current Fock matrix: F(  9)
+   1     -1.503249     -0.879386
+   2     -0.879386     -0.720171
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -1.542913     -0.252167
+Following set of orbital coefficients: C( 10)
+   1     -0.895473     -0.196617
+   2      0.675376     -1.104241
+Resulting density matrix: P( 10)
+   1      1.603745      0.352130
+   2      0.352130      0.077316
+Cycle:    9 Delta P, Eelec, Etot:       0.0000002556     -4.0299930985     -2.8540437410
+SCF procedure converged, with final energy:     -2.8540437410
+Converged orbital eigenvalues:
+   1 -    2     -1.542913     -0.252167
+Converged orbital coefficients (orbital by orbital):
+   1     -0.895473     -0.196617
+   2      0.675376     -1.104241
+Final Fock matrix:
+   1     -1.503249     -0.879386
+   2     -0.879386     -0.720171
+Final density matrix:
+   1      1.603745      0.352130
+   2      0.352130      0.077316
+Overall Energy Gradient
+He    0.00000000    0.00000000    0.01210079
+H     0.00000000    0.00000000   -0.01210079
+Contributions to the overall energy gradient:
+Gradient due to the overlap (Lagrangian) term:
+He    0.00000000    0.00000000    0.36629600
+H     0.00000000    0.00000000   -0.36629600
+Gradient due to the kinetic energy term:
+He    0.00000000    0.00000000    0.18458306
+H     0.00000000    0.00000000   -0.18458306
+Gradient due to the electron-nucleus Coulomb energy term:
+He    0.00000000    0.00000000   -1.46609436
+H     0.00000000    0.00000000    1.46609436
+Gradient due to the two-electron Coulomb repulsion term:
+He    0.00000000    0.00000000    0.23588764
+H     0.00000000    0.00000000   -0.23588764
+Gradient due to the nuclear repulsion term:
+He    0.00000000    0.00000000    0.69142845
+H     0.00000000    0.00000000   -0.69142845
+For control purposes: difference between sum of above 5 terms and total Gradient:
+He    0.00000000    0.00000000    0.00000000
+H     0.00000000    0.00000000    0.00000000

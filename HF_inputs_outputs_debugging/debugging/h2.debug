@@ -1,0 +1,86 @@
+Detailed output for debugging simple Hartree-Fock code with gradient calculation.
+ 
+The system contains   2 atoms, and:   2 electrons in   1 orbitals.
+The Overlap Matrix S:
+   1      1.000000      0.659350
+   2      0.659350      1.000000
+Eigenvalues of the Overlap Matrix S:
+   1 -    2      0.340650      1.659350
+Inverse Square Root of Overlap Matrix S^-1/2:
+   1      1.244825     -0.468523
+   2     -0.468523      1.244825
+Core Hamiltonian:
+   1     -1.120440     -0.958436
+   2     -0.958436     -1.120440
+Core Hamiltonian in Orthogonal Basis:
+   1     -0.864199     -0.388627
+   2     -0.388627     -0.864199
+Eigenvalues of the core hamiltonian:
+   1 -    2     -1.252826     -0.475572
+Associated eigenvectors / orbital coefficients:
+   1      0.548929      0.548929
+   2     -1.211520      1.211520
+First Density matrix:
+   1      0.602646      0.602646
+   2      0.602646      0.602646
+**** Starting the SCF procedure ****
+*** SCF Cycle ***           1
+Current Fock matrix: F(  1)
+   1     -0.365565     -0.593909
+   2     -0.593909     -0.365565
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -0.578223      0.670317
+Following set of orbital coefficients: C(  2)
+   1     -0.548929     -0.548929
+   2     -1.211520      1.211520
+Resulting density matrix: P(  2)
+   1      0.602646      0.602646
+   2      0.602646      0.602646
+Cycle:    1 Delta P, Eelec, Etot:       0.0000000000     -1.8310489973     -1.1167169092
+*** SCF Cycle ***           2
+Current Fock matrix: F(  2)
+   1     -0.365565     -0.593909
+   2     -0.593909     -0.365565
+Eigenvalues of this Matrix, i.e. orbital energies:
+   1 -    2     -0.578223      0.670317
+Following set of orbital coefficients: C(  3)
+   1      0.548929      0.548929
+   2      1.211520     -1.211520
+Resulting density matrix: P(  3)
+   1      0.602646      0.602646
+   2      0.602646      0.602646
+Cycle:    2 Delta P, Eelec, Etot:       0.0000000000     -1.8310489973     -1.1167169092
+SCF procedure converged, with final energy:     -1.1167169092
+Converged orbital eigenvalues:
+   1 -    2     -0.578223      0.670317
+Converged orbital coefficients (orbital by orbital):
+   1      0.548929      0.548929
+   2      1.211520     -1.211520
+Final Fock matrix:
+   1     -0.365565     -0.593909
+   2     -0.593909     -0.365565
+Final density matrix:
+   1      0.602646      0.602646
+   2      0.602646      0.602646
+Overall Energy Gradient
+H     0.00000000    0.00000000   -0.02841025
+H     0.00000000    0.00000000    0.02841025
+Contributions to the overall energy gradient:
+Gradient due to the overlap (Lagrangian) term:
+H     0.00000000    0.00000000    0.24129681
+H     0.00000000    0.00000000   -0.24129681
+Gradient due to the kinetic energy term:
+H     0.00000000    0.00000000    0.38003409
+H     0.00000000    0.00000000   -0.38003409
+Gradient due to the electron-nucleus Coulomb energy term:
+H     0.00000000    0.00000000   -1.54251056
+H     0.00000000    0.00000000    1.54251056
+Gradient due to the two-electron Coulomb repulsion term:
+H     0.00000000    0.00000000    0.38249909
+H     0.00000000    0.00000000   -0.38249909
+Gradient due to the nuclear repulsion term:
+H     0.00000000    0.00000000    0.51027033
+H     0.00000000    0.00000000   -0.51027033
+For control purposes: difference between sum of above 5 terms and total Gradient:
+H     0.00000000    0.00000000    0.00000000
+H     0.00000000    0.00000000    0.00000000
