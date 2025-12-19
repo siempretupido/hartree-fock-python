@@ -187,3 +187,79 @@ def read_integrals(path, nbasis):
         eri[sig, lam, nu, mu] = val
 
     return S, T, V, eri
+
+
+def read_mu_to_atom(path, nbasis):
+    """
+    Reads the 'Basis set: Func no, At label, Atom on which it is placed' block
+    and returns a list mu_to_atom of length nbasis.
+
+    mu_to_atom[mu] = atom_index (0-based)
+    """
+    with open(path, "r") as f:
+        lines = [line.strip() for line in f if line.strip()]
+
+    idx = _find_index(lines, "Basis set:")
+    idx += 1  # first line after the header
+
+    mu_to_atom = [None] * nbasis
+
+    # For each basis function, the format is:
+    #   mu  label  atom_index
+    #   nprim
+    #   nprim lines: zeta coeff
+    for _ in range(nbasis):
+        parts = lines[idx].split()
+        mu = int(parts[0]) - 1          # 0-based
+        atom_index = int(parts[2]) - 1  # 0-based
+        mu_to_atom[mu] = atom_index
+
+        idx += 1
+        nprim = int(lines[idx])
+        idx += 1 + nprim  # skip primitives lines
+
+    if any(x is None for x in mu_to_atom):
+        raise ValueError("Failed to build mu_to_atom from Basis set block.")
+
+    return mu_to_atom
+
+
+def read_overlap_derivatives(path, nbasis, natoms, mu_to_atom):
+    """
+    Reads:
+      E. Derivatives of overlap integrals (first the number of such integral vectors)
+
+    Returns:
+      dS: array (natoms, nbasis, nbasis, 3) where:
+          dS[A, mu, nu, :] = (dS/dx, dS/dy, dS/dz) wrt atom A
+    """
+    with open(path, "r") as f:
+        lines = [line.strip() for line in f if line.strip()]
+
+    idx = _find_index(lines, "E. Derivatives of overlap integrals")
+    nvec = int(lines[idx + 1])
+    start = idx + 4
+
+    dS = np.zeros((natoms, nbasis, nbasis, 3), dtype=float)
+
+    for k in range(nvec):
+        parts = lines[start + k].split()
+        mu = int(parts[0]) - 1
+        nu = int(parts[1]) - 1
+        dx = float(parts[2])
+        dy = float(parts[3])
+        dz = float(parts[4])
+
+        A = mu_to_atom[mu]  # derivative wrt atom where mu is centered
+
+        dS[A, mu, nu, 0] = dx
+        dS[A, mu, nu, 1] = dy
+        dS[A, mu, nu, 2] = dz
+
+        # symmetry: S_{mu nu} = S_{nu mu}
+        dS[A, nu, mu, 0] = dx
+        dS[A, nu, mu, 1] = dy
+        dS[A, nu, mu, 2] = dz
+
+    return dS
+
