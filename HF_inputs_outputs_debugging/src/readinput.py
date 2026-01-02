@@ -59,11 +59,7 @@ def read_basic_input(path):
     """
     # Read all non-empty lines
     with open(path, "r") as f:
-        lines = []
-        for line in f:
-            stripped = line.strip()
-            if stripped:
-                lines.append(stripped)
+        lines = [line.strip() for line in f if line.strip()]
 
     # --- number of atoms ---
     idx_na = _find_index(lines, "number of atoms")
@@ -208,7 +204,7 @@ def read_mu_to_atom(path, nbasis):
     #   mu  label  atom_index
     #   nprim
     #   nprim lines: zeta coeff
-    for _ in range(nbasis):
+    for k in range(nbasis):
         parts = lines[idx].split()
         mu = int(parts[0]) - 1          # 0-based
         atom_index = int(parts[2]) - 1  # 0-based
@@ -224,23 +220,35 @@ def read_mu_to_atom(path, nbasis):
     return mu_to_atom
 
 
-def read_overlap_derivatives(path, nbasis, natoms, mu_to_atom):
+def read_derivatives(path, nbasis, natoms, mu_to_atom):
     """
-    Reads:
-      E. Derivatives of overlap integrals (first the number of such integral vectors)
+    Reads the derivative sections present in extended inputs:
+      E. Derivatives of overlap integrals
+      F. Derivatives of kinetic energy integrals
+      G. Derivatives of nucleus-electron attraction integrals
+      H. Derivatives of two-electron integrals
 
     Returns:
-      dS: array (natoms, nbasis, nbasis, 3) where:
-          dS[A, mu, nu, :] = (dS/dx, dS/dy, dS/dz) wrt atom A
+      dS  : array (natoms, nbasis, nbasis, 3)      d/dCoords on atom A of S_{mu nu}
+      dT  : array (natoms, nbasis, nbasis, 3)      d/dCoords on atom A of T_{mu nu}
+      dV  : array (natoms, nbasis, nbasis, 3)      d/dCoords on atom A of V_{mu nu}
+      dERI: array (natoms, nbasis, nbasis, nbasis, nbasis, 3)
+            d/dCoords on atom A of (mu nu | lam sig).
+
+      The overlap and kinetic derivatives are given with respect to the atom on
+      which basis function mu is centered, hence the mu_to_atom argument.
     """
     with open(path, "r") as f:
         lines = [line.strip() for line in f if line.strip()]
 
+    # --- E. Overlap derivatives ---
     idx = _find_index(lines, "E. Derivatives of overlap integrals")
     nvec = int(lines[idx + 1])
-    start = idx + 4
+    start = idx + 2
+    while start < len(lines) and not lines[start][0].isdigit():
+        start += 1
 
-    dS = np.zeros((natoms, nbasis, nbasis, 3), dtype=float)
+    dS = np.zeros((natoms, nbasis, nbasis, 3), dtype=float)  # dS[A, mu, nu, xyz]
 
     for k in range(nvec):
         parts = lines[start + k].split()
@@ -249,17 +257,105 @@ def read_overlap_derivatives(path, nbasis, natoms, mu_to_atom):
         dx = float(parts[2])
         dy = float(parts[3])
         dz = float(parts[4])
+        vec = (dx, dy, dz)
 
-        A = mu_to_atom[mu]  # derivative wrt atom where mu is centered
+        atom_mu = mu_to_atom[mu]
+        atom_nu = mu_to_atom[nu]
 
-        dS[A, mu, nu, 0] = dx
-        dS[A, mu, nu, 1] = dy
-        dS[A, mu, nu, 2] = dz
+        dS[atom_mu, mu, nu, :] = vec
+        dS[atom_mu, nu, mu, :] = vec
 
-        # symmetry: S_{mu nu} = S_{nu mu}
-        dS[A, nu, mu, 0] = dx
-        dS[A, nu, mu, 1] = dy
-        dS[A, nu, mu, 2] = dz
+        if atom_nu != atom_mu:
+            dS[atom_nu, mu, nu, :] = (-dx, -dy, -dz)
+            dS[atom_nu, nu, mu, :] = (-dx, -dy, -dz)
 
-    return dS
+    # --- F. Kinetic derivatives ---
+    idx = _find_index(lines, "F. Derivatives of kinetic energy integrals")
+    nvec = int(lines[idx + 1])
+    start = idx + 2
+    while start < len(lines) and not lines[start][0].isdigit():
+        start += 1
+
+    dT = np.zeros((natoms, nbasis, nbasis, 3), dtype=float)  # dT[A, mu, nu, xyz]
+
+    for k in range(nvec):
+        parts = lines[start + k].split()
+        mu = int(parts[0]) - 1
+        nu = int(parts[1]) - 1
+        dx = float(parts[2])
+        dy = float(parts[3])
+        dz = float(parts[4])
+        vec = (dx, dy, dz)
+
+        atom_mu = mu_to_atom[mu]
+        atom_nu = mu_to_atom[nu]
+
+        dT[atom_mu, mu, nu, :] = vec
+        dT[atom_mu, nu, mu, :] = vec
+
+        if atom_nu != atom_mu:
+            dT[atom_nu, mu, nu, :] = (-dx, -dy, -dz)
+            dT[atom_nu, nu, mu, :] = (-dx, -dy, -dz)
+
+    # --- G. Nuclear attraction derivatives ---
+    idx = _find_index(lines, "G. Derivatives of Nucleus-electron energy integrals")
+    nvec = int(lines[idx + 1])
+    start = idx + 2
+    while start < len(lines) and not lines[start][0].isdigit():
+        start += 1
+
+    dV = np.zeros((natoms, nbasis, nbasis, 3), dtype=float)  # dV[A, mu, nu, xyz]
+
+    for k in range(nvec):
+        parts = lines[start + k].split()
+        mu = int(parts[0]) - 1
+        nu = int(parts[1]) - 1
+        atom = int(parts[2]) - 1
+        dx = float(parts[3])
+        dy = float(parts[4])
+        dz = float(parts[5])
+
+        dV[atom, mu, nu, 0] = dx
+        dV[atom, mu, nu, 1] = dy
+        dV[atom, mu, nu, 2] = dz
+
+        dV[atom, nu, mu, 0] = dx
+        dV[atom, nu, mu, 1] = dy
+        dV[atom, nu, mu, 2] = dz
+
+    # --- H. Two-electron derivatives ---
+    idx = _find_index(lines, "H. Derivatives of two-electron integrals")
+    nvec = int(lines[idx + 1])
+    start = idx + 2
+    while start < len(lines) and not lines[start][0].isdigit():
+        start += 1
+
+    dERI = np.zeros((natoms, nbasis, nbasis, nbasis, nbasis, 3), dtype=float)  # dERI[A, mu, nu, lam, sig, xyz]
+
+    for k in range(nvec):
+        parts = lines[start + k].split()
+        mu = int(parts[0]) - 1
+        nu = int(parts[1]) - 1
+        lam = int(parts[2]) - 1
+        sig = int(parts[3]) - 1
+        atom = int(parts[4]) - 1
+        dx = float(parts[5])
+        dy = float(parts[6])
+        dz = float(parts[7])
+
+        for (a, b, c, d) in [
+            (mu, nu, lam, sig),
+            (mu, nu, sig, lam),
+            (nu, mu, lam, sig),
+            (nu, mu, sig, lam),
+            (lam, sig, mu, nu),
+            (lam, sig, nu, mu),
+            (sig, lam, mu, nu),
+            (sig, lam, nu, mu),
+        ]:
+            dERI[atom, a, b, c, d, 0] = dx
+            dERI[atom, a, b, c, d, 1] = dy
+            dERI[atom, a, b, c, d, 2] = dz
+
+    return dS, dT, dV, dERI
 
