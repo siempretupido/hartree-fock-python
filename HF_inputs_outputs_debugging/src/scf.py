@@ -1,5 +1,6 @@
 # scf.py
 import numpy as np
+ANGSTROM_TO_BOHR = 1.8897261246257702
 
 def build_Hcore(T, V):
     """
@@ -88,10 +89,6 @@ def build_Fock(Hcore, J, K):
     """
     return Hcore + J - 0.5 * K
 
-# CODATA 2018: 1 Angstrom in Bohr radii.
-ANGSTROM_TO_BOHR = 1.8897261246257702
-
-
 def nuclear_repulsion_energy(atoms):
     """
     E_nuc = sum_{A<B} Z_A Z_B / R_AB
@@ -177,7 +174,7 @@ def run_scf(
     nelec = sum(a.Z for a in mol.atoms) - charge
     if nelec % 2 != 0:
         raise ValueError(f"RHF requires even nelec, got {nelec}")
-    nocc = nelec // 2  # not used here directly, but good to know
+    nocc = nelec // 2
 
     nbasis = S.shape[0]
     Hcore = build_Hcore(T, V)
@@ -204,11 +201,6 @@ def run_scf(
     E_tot_print = E_nuc
 
     converged = False
-    F = None
-    C = None
-    eps = None
-    E_elec = None
-    E_tot = None
 
     for it in range(1, max_iter + 1):
         F, C, eps, P_new = scf_step(P, Hcore, eri, S_inv_sqrt, nelec)
@@ -236,7 +228,7 @@ def run_scf(
 
         P = P_new
 
-    # Recompute final F, C, eps, and energies using the converged (or last) density.
+    # Recompute final F, C, eps, and energies using the converged density.
     # This avoids returning energies built from an older density matrix.
     F, C, eps, _ = scf_step(P, Hcore, eri, S_inv_sqrt, nelec)
     E_elec = electronic_energy(P, Hcore, F)

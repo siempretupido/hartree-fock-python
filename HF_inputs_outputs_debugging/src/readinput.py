@@ -185,12 +185,11 @@ def read_integrals(path, nbasis):
     return S, T, V, eri
 
 
-def read_mu_to_atom(path, nbasis):
+def read_basis_block(path, nbasis):
     """
-    Reads the 'Basis set: Func no, At label, Atom on which it is placed' block
-    and returns a list mu_to_atom of length nbasis.
-
-    mu_to_atom[mu] = atom_index (0-based)
+    Reads the basis set block and returns:
+      - basis: list of basis functions (atom_index + primitives)
+      - mu_to_atom: list mapping basis function to atom index (0-based)
     """
     with open(path, "r") as f:
         lines = [line.strip() for line in f if line.strip()]
@@ -198,6 +197,7 @@ def read_mu_to_atom(path, nbasis):
     idx = _find_index(lines, "Basis set:")
     idx += 1  # first line after the header
 
+    basis = [None] * nbasis
     mu_to_atom = [None] * nbasis
 
     # For each basis function, the format is:
@@ -212,12 +212,24 @@ def read_mu_to_atom(path, nbasis):
 
         idx += 1
         nprim = int(lines[idx])
-        idx += 1 + nprim  # skip primitives lines
+        idx += 1
+
+        primitives = []
+        for i in range(nprim):
+            zeta_str, coeff_str = lines[idx].split()
+            primitives.append((float(zeta_str), float(coeff_str)))
+            idx += 1
+
+        basis[mu] = {
+            "atom_index": atom_index,
+            "primitives": primitives,
+        }
 
     if any(x is None for x in mu_to_atom):
         raise ValueError("Failed to build mu_to_atom from Basis set block.")
 
-    return mu_to_atom
+    return basis, mu_to_atom
+
 
 
 def read_derivatives(path, nbasis, natoms, mu_to_atom):
