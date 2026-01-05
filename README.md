@@ -1,6 +1,6 @@
 # Hartree-Fock Python
 
-This repository contains a small Hartree-Fock (RHF) implementation in Python, including analytic s-type Gaussian integrals, SCF, and nuclear gradients. It includes input examples and a workflow that supports both on-the-fly integral evaluation and reading precomputed integrals/derivatives from extended input files.
+This repository contains a small Hartree-Fock (RHF) implementation in Python, including analytic s-type Gaussian integrals, SCF, and nuclear gradients. It includes input examples and a workflow that supports both integral evaluation and reading precomputed integrals/derivatives from extended input files.
 
 ## Requirements
 
@@ -22,7 +22,7 @@ python HF_inputs_outputs_debugging/src/main.py HF_inputs_outputs_debugging/input
 python HF_inputs_outputs_debugging/src/main.py HF_inputs_outputs_debugging/inputs/h2_631G_extended.input
 ```
 
-Standard inputs compute integrals on the fly. Extended inputs read precomputed integrals and derivatives for SCF + gradients.
+Standard inputs compute integrals. Extended inputs read precomputed integrals and derivatives for SCF + gradients.
 
 ## Project layout
 
