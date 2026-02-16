@@ -24,20 +24,20 @@ from scf import run_scf
 def main():
     path = sys.argv[1]
 
-    # --- basic molecular data (always needed) ---
+    # Read basic molecular data.
     mol = read_basic_input(path)
     print("Number of atoms:", len(mol.atoms))
     print("Number of basis functions:", mol.nbasis)
     print("Total charge:", mol.charge)
 
-    # --- extended input: integrals + SCF ---
+    # If input is extended, read integrals and derivatives from file.
     if "extended" in path.lower():
         print("Extended input detected.\n")
 
-        # read integrals
+        # Read integrals.
         S, T, V, eri = read_integrals(path, mol.nbasis)
 
-        # OPTIONAL: read overlap derivatives (for gradients later)
+        # Read derivatives.
         _, mu_to_atom = read_basis_block(path, mol.nbasis)
         dS, dT, dVder, dERI = read_derivatives(
             path,
@@ -46,7 +46,7 @@ def main():
             mu_to_atom,
         )
 
-        # --- run SCF ---
+        # Run SCF.
         results = run_scf(
             mol,
             S,

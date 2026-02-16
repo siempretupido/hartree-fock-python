@@ -3,28 +3,18 @@ import numpy as np
 ANGSTROM_TO_BOHR = 1.8897261246257702
 
 def build_Hcore(T, V):
-    """
-    Construct the core Hamiltonian matrix:
-        H_core = T + V
-    where:
-        T = kinetic energy matrix
-        V = nuclear attraction matrix
-    """
+    """Build core Hamiltonian matrix Hcore = T + V."""
     return T + V
 
 
 def build_S_inv_sqrt(S):
-    """
-    Compute the inverse square root of the overlap matrix S:
-        S^{-1/2} = U * diag(1/sqrt(s_i)) * U^T
-    using the symmetric eigenvalue decomposition S = U s U^T.
-    """
+    """Compute inverse square root of overlap matrix S."""
     evals, evecs = np.linalg.eigh(S)
 
-    # build the diagonal matrix s^{-1/2}
+    # Build diag(s^-1/2).
     inv_sqrt_evals = np.diag(1.0 / np.sqrt(evals))
 
-    # reconstruct S^{-1/2}
+    # Reconstruct S^-1/2.
     S_inv_sqrt = evecs @ inv_sqrt_evals @ evecs.T
 
     return S_inv_sqrt
@@ -47,16 +37,8 @@ def compute_P(C, nelec):
 
 
 def build_J(P, eri):
-    """
-    Build the Coulomb matrix J from the density matrix P and
-    the two-electron integrals eri:
-
-        J_{μν} = sum_{λσ} P_{λσ} (μν | λσ)
-
-    P  : (nbasis x nbasis) density matrix
-    eri: (nbasis x nbasis x nbasis x nbasis) tensor of two-electron integrals
-    """
-    nbasis = P.shape[0]          # number of basis functions
+    """Build Coulomb matrix J from density matrix P."""
+    nbasis = P.shape[0]          # Number of basis functions.
     J = np.zeros((nbasis, nbasis))
 
     for mu in range(nbasis):
@@ -84,15 +66,11 @@ def build_K(P, eri):
 
 
 def build_Fock(Hcore, J, K):
-    """
-    F = H_core + J - 1/2 K
-    """
+    """Build Fock matrix F = Hcore + J - 0.5*K."""
     return Hcore + J - 0.5 * K
 
 def nuclear_repulsion_energy(atoms):
-    """
-    E_nuc = sum_{A<B} Z_A Z_B / R_AB
-    """
+    """Compute nuclear repulsion energy."""
     E = 0.0
     n = len(atoms)
 
@@ -116,30 +94,24 @@ def nuclear_repulsion_energy(atoms):
 
 
 def electronic_energy(P, Hcore, F):
-    """
-    RHF electronic energy:
-        E_elec = 1/2 * sum_{μν} P_{μν} (H_{μν} + F_{μν})
-    """
+    """Compute RHF electronic energy."""
     return 0.5 * np.sum(P * (Hcore + F))
 
 
 def scf_step(P, Hcore, eri, S_inv_sqrt, nelec):
-    """
-    One SCF update:
-      P -> (J,K) -> F -> diagonalize -> C -> P_new
-    """
+    """Run one SCF update step."""
     J = build_J(P, eri)
     K = build_K(P, eri)
     F = build_Fock(Hcore, J, K)
 
-    # Orthonormalize: F' = X^T F X, with X = S^{-1/2}
+    # Orthonormalize F.
     Fp = S_inv_sqrt.T @ F @ S_inv_sqrt
     eps, Cp = np.linalg.eigh(Fp)
 
-    # Back-transform MO coeffs
+    # Back-transform MO coefficients.
     C = S_inv_sqrt @ Cp
 
-    # New density
+    # Build new density.
     P_new = compute_P(C, nelec)
 
     return F, C, eps, P_new
@@ -155,21 +127,8 @@ def run_scf(
     tol=1e-6,
     verbose=True,
 ):
-    """
-    Minimal RHF SCF driver.
-
-    Inputs:
-      mol: molecule object with mol.atoms and mol.charge
-      S,T,V,eri: integrals in AO basis
-      max_iter: maximum SCF cycles
-      tol: convergence threshold for max(|P_new - P_old|)
-      verbose: print iteration table
-
-    Returns:
-      results dict with keys:
-        P, F, C, eps, E_elec, E_tot, E_nuc, niter, converged
-    """
-    # electron count
+    """Run RHF SCF and return densities, orbitals and energies."""
+    # Electron count.
     charge = mol.charge
     nelec = sum(a.Z for a in mol.atoms) - charge
     if nelec % 2 != 0:
@@ -180,10 +139,10 @@ def run_scf(
     Hcore = build_Hcore(T, V)
     S_inv_sqrt = build_S_inv_sqrt(S)
 
-    # energies
+    # Nuclear repulsion energy.
     E_nuc = nuclear_repulsion_energy(mol.atoms)
 
-    # initial guess: core Hamiltonian diagonalization
+    # Initial guess from Hcore diagonalization.
     F_core = Hcore
     Fp_core = S_inv_sqrt.T @ F_core @ S_inv_sqrt
     eps_core, Cp_core = np.linalg.eigh(Fp_core)
@@ -195,8 +154,7 @@ def run_scf(
         print(f"E_nuc = {E_nuc:.10f}")
         print("iter  max|ΔP|          E_elec              E_tot")
 
-    # Match legacy output: first line prints E_elec=0.0, E_tot=E_nuc,
-    # then each subsequent line prints the energy from the previous cycle.
+    # Print format compatible with legacy output.
     E_elec_print = 0.0
     E_tot_print = E_nuc
 
@@ -205,10 +163,10 @@ def run_scf(
     for it in range(1, max_iter + 1):
         F, C, eps, P_new = scf_step(P, Hcore, eri, S_inv_sqrt, nelec)
 
-        # convergence metric: max element change in density
+        # Convergence metric.
         deltaP = np.max(np.abs(P_new - P))
 
-        # energies (use the current density with a matching Fock build)
+        # Energies for current density.
         J_energy = build_J(P_new, eri)
         K_energy = build_K(P_new, eri)
         F_energy = build_Fock(Hcore, J_energy, K_energy)
@@ -228,8 +186,7 @@ def run_scf(
 
         P = P_new
 
-    # Recompute final F, C, eps, and energies using the converged density.
-    # This avoids returning energies built from an older density matrix.
+    # Recompute final quantities with converged density.
     F, C, eps, _ = scf_step(P, Hcore, eri, S_inv_sqrt, nelec)
     E_elec = electronic_energy(P, Hcore, F)
     E_tot = E_elec + E_nuc

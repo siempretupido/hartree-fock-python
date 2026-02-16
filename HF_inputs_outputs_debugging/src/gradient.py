@@ -3,10 +3,7 @@ import numpy as np
 from scf import ANGSTROM_TO_BOHR
 
 def build_Q(C, eps, nelec):
-    """
-    Construct the energy-weighted density (aka Pulay matrix)
-    W_{μν} = 2 * sum_i ε_i C_{μi} C_{νi}, over occupied orbitals.
-    """
+    """Build energy-weighted density matrix for occupied orbitals."""
     if C is None or eps is None:
         raise ValueError("SCF coefficients/energies are required to build W.")
 
@@ -18,9 +15,7 @@ def build_Q(C, eps, nelec):
 
 
 def _contract_density_deriv(dX, density):
-    """
-    Contract derivative tensor dX[A, mu, nu, 3] with a density matrix using loops.
-    """
+    """Contract derivative tensor with a density matrix."""
     natoms = dX.shape[0]
     nbasis = density.shape[0]
     grad = np.zeros((natoms, 3), dtype=float)
@@ -34,12 +29,7 @@ def _contract_density_deriv(dX, density):
 
 
 def nuclear_repulsion_gradient(atoms):
-    """
-    Gradient of the classical nuclear repulsion energy.
-
-    Returns:
-      grad[A, :] = ∂E_nuc / ∂R_A  (Hartree / Bohr)
-    """
+    """Compute gradient of nuclear repulsion energy."""
     natoms = len(atoms)
     grad = np.zeros((natoms, 3), dtype=float)
 
@@ -73,13 +63,7 @@ def compute_gradient(
     dV,
     dERI,
 ):
-    """
-    Compute the RHF energy gradient broken down by contribution.
-
-    Returns a dict with keys:
-      overlap, kinetic, nuclear_attraction, two_electron, nuclear_repulsion, total
-    Each value is an array (natoms, 3) in Hartree/Bohr.
-    """
+    """Compute RHF gradient contributions and total gradient."""
     P = scf_results.get("P")
     C = scf_results.get("C")
     eps = scf_results.get("eps")

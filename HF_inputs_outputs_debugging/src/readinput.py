@@ -14,7 +14,7 @@ class Atom:
 
 class Molecule:
     def __init__(self, atoms, charge, nbasis, max_nc):
-        # atoms is a list of Atom objects
+        # List of Atom objects.
         self.atoms = atoms
         self.charge = charge
         self.nbasis = nbasis
@@ -22,10 +22,7 @@ class Molecule:
 
 
 def _find_index(lines, pattern):
-    """
-    Find the index of the first line that starts with 'pattern',
-    ignoring case. Raises ValueError if not found.
-    """
+    """Return index of first line starting with pattern (case-insensitive)."""
     pattern_lower = pattern.lower()
     for i, line in enumerate(lines):
         if line.lower().startswith(pattern_lower):
@@ -34,38 +31,16 @@ def _find_index(lines, pattern):
 
 
 def read_basic_input(path):
-    """
-    Reads the basic molecular data from a .input file:
-      - number of atoms
-      - list of atoms (labels, Z, coordinates)
-      - total charge
-      - number of basis functions
-      - max_nc
-
-    Assumes a format like:
-
-      Input for Hartree-Fock calculations:
-      number of atoms
-         2
-      Atom labels, atom number Z, coords (Angstrom)
-      H 1  ...
-      H 1  ...
-      Overall charge
-         0
-      Number of basis funcs
-         4
-      Maximum number of primitives
-         3
-    """
-    # Read all non-empty lines
+    """Read molecule data (atoms, charge, nbasis, max_nc) from input file."""
+    # Read non-empty lines.
     with open(path, "r") as f:
         lines = [line.strip() for line in f if line.strip()]
 
-    # --- number of atoms ---
+    # Number of atoms.
     idx_na = _find_index(lines, "number of atoms")
     natoms = int(lines[idx_na + 1])
 
-    # --- atoms block ---
+    # Atoms block.
     idx_atoms_header = _find_index(lines, "Atom labels")
     first_atom_line = idx_atoms_header + 1
 
@@ -80,15 +55,15 @@ def read_basic_input(path):
         atom = Atom(label, Z, x, y, z)
         atoms.append(atom)
 
-    # --- total charge ---
+    # Total charge.
     idx_charge = _find_index(lines, "Overall charge")
     charge = int(lines[idx_charge + 1])
 
-    # --- number of basis functions ---
+    # Number of basis functions.
     idx_nb = _find_index(lines, "Number of basis funcs")
     nbasis = int(lines[idx_nb + 1])
 
-    # --- maximum number of primitives ---
+    # Maximum number of primitives.
     idx_maxnc = _find_index(lines, "Maximum number of primitives")
     max_nc = int(lines[idx_maxnc + 1])
 
@@ -97,37 +72,28 @@ def read_basic_input(path):
 
 
 def read_integrals(path, nbasis):
-    """
-    Reads one- and two-electron integrals from an *extended* HF input file.
-
-    Returns:
-      S   : overlap matrix      (nbasis x nbasis)    [numpy.ndarray]
-      T   : kinetic matrix      (nbasis x nbasis)
-      V   : nuclear attraction  (nbasis x nbasis)
-      eri : two-electron tensor (nbasis x nbasis x nbasis x nbasis)
-            (μν|λσ), with all symmetry-related entries filled.
-    """
-    # Read all non-empty lines
+    """Read S, T, V and two-electron integrals from extended input file."""
+    # Read non-empty lines.
     with open(path, "r") as f:
         lines = [line.strip() for line in f if line.strip()]
 
-    # --- A. Overlap integrals ---
+    # A. Overlap integrals.
     idx_ov = _find_index(lines, "A. Overlap integrals")
     nS = int(lines[idx_ov + 1])
 
     S = np.zeros((nbasis, nbasis), dtype=float)
 
-    # Each of the next nS lines has: mu  nu  value
+    # Next nS lines: mu nu value.
     for k in range(nS):
         parts = lines[idx_ov + 2 + k].split()
-        mu = int(parts[0]) - 1   # convert from 1-based to 0-based
+        mu = int(parts[0]) - 1   # 1-based to 0-based.
         nu = int(parts[1]) - 1
         val = float(parts[2])
 
         S[mu, nu] = val
-        S[nu, mu] = val  # enforce symmetry
+        S[nu, mu] = val  # Symmetry.
 
-    # --- B. Kinetic integrals ---
+    # B. Kinetic integrals.
     idx_kin = _find_index(lines, "B. Kinetic integrals")
     nT = int(lines[idx_kin + 1])
 
@@ -142,7 +108,7 @@ def read_integrals(path, nbasis):
         T[mu, nu] = val
         T[nu, mu] = val
 
-    # --- C. Nuclear Attraction integrals ---
+    # C. Nuclear attraction integrals.
     idx_v = _find_index(lines, "C. Nuclear Attraction integrals")
     nV = int(lines[idx_v + 1])
 
@@ -157,11 +123,11 @@ def read_integrals(path, nbasis):
         V[mu, nu] = val
         V[nu, mu] = val
 
-    # --- D. Two-electron integrals ---
+    # D. Two-electron integrals.
     idx_eri = _find_index(lines, "D. Two-Electron integrals")
     nERI = int(lines[idx_eri + 1])
 
-    # eri[mu, nu, lam, sig] = (mu nu | lam sig)
+    # eri[mu, nu, lam, sig] = (mu nu | lam sig).
     eri = np.zeros((nbasis, nbasis, nbasis, nbasis), dtype=float)
 
     for k in range(nERI):
@@ -172,7 +138,7 @@ def read_integrals(path, nbasis):
         sig = int(parts[3]) - 1
         val = float(parts[4])
 
-        # Fill all symmetry-related positions
+        # Fill symmetry-related entries.
         eri[mu, nu, lam, sig] = val
         eri[mu, nu, sig, lam] = val
         eri[nu, mu, lam, sig] = val
@@ -186,28 +152,21 @@ def read_integrals(path, nbasis):
 
 
 def read_basis_block(path, nbasis):
-    """
-    Reads the basis set block and returns:
-      - basis: list of basis functions (atom_index + primitives)
-      - mu_to_atom: list mapping basis function to atom index (0-based)
-    """
+    """Read basis set block and map each basis function to its atom."""
     with open(path, "r") as f:
         lines = [line.strip() for line in f if line.strip()]
 
     idx = _find_index(lines, "Basis set:")
-    idx += 1  # first line after the header
+    idx += 1  # First line after header.
 
     basis = [None] * nbasis
     mu_to_atom = [None] * nbasis
 
-    # For each basis function, the format is:
-    #   mu  label  atom_index
-    #   nprim
-    #   nprim lines: zeta coeff
+    # Per basis function: header, nprim, then primitive lines.
     for k in range(nbasis):
         parts = lines[idx].split()
-        mu = int(parts[0]) - 1          # 0-based
-        atom_index = int(parts[2]) - 1  # 0-based
+        mu = int(parts[0]) - 1          # 0-based.
+        atom_index = int(parts[2]) - 1  # 0-based.
         mu_to_atom[mu] = atom_index
 
         idx += 1
@@ -233,27 +192,11 @@ def read_basis_block(path, nbasis):
 
 
 def read_derivatives(path, nbasis, natoms, mu_to_atom):
-    """
-    Reads the derivative sections present in extended inputs:
-      E. Derivatives of overlap integrals
-      F. Derivatives of kinetic energy integrals
-      G. Derivatives of nucleus-electron attraction integrals
-      H. Derivatives of two-electron integrals
-
-    Returns:
-      dS  : array (natoms, nbasis, nbasis, 3)      d/dCoords on atom A of S_{mu nu}
-      dT  : array (natoms, nbasis, nbasis, 3)      d/dCoords on atom A of T_{mu nu}
-      dV  : array (natoms, nbasis, nbasis, 3)      d/dCoords on atom A of V_{mu nu}
-      dERI: array (natoms, nbasis, nbasis, nbasis, nbasis, 3)
-            d/dCoords on atom A of (mu nu | lam sig).
-
-      The overlap and kinetic derivatives are given with respect to the atom on
-      which basis function mu is centered, hence the mu_to_atom argument.
-    """
+    """Read derivative sections E/F/G/H from extended input file."""
     with open(path, "r") as f:
         lines = [line.strip() for line in f if line.strip()]
 
-    # --- E. Overlap derivatives ---
+    # E. Overlap derivatives.
     idx = _find_index(lines, "E. Derivatives of overlap integrals")
     nvec = int(lines[idx + 1])
     start = idx + 2
@@ -281,7 +224,7 @@ def read_derivatives(path, nbasis, natoms, mu_to_atom):
             dS[atom_nu, mu, nu, :] = (-dx, -dy, -dz)
             dS[atom_nu, nu, mu, :] = (-dx, -dy, -dz)
 
-    # --- F. Kinetic derivatives ---
+    # F. Kinetic derivatives.
     idx = _find_index(lines, "F. Derivatives of kinetic energy integrals")
     nvec = int(lines[idx + 1])
     start = idx + 2
@@ -309,7 +252,7 @@ def read_derivatives(path, nbasis, natoms, mu_to_atom):
             dT[atom_nu, mu, nu, :] = (-dx, -dy, -dz)
             dT[atom_nu, nu, mu, :] = (-dx, -dy, -dz)
 
-    # --- G. Nuclear attraction derivatives ---
+    # G. Nuclear attraction derivatives.
     idx = _find_index(lines, "G. Derivatives of Nucleus-electron energy integrals")
     nvec = int(lines[idx + 1])
     start = idx + 2
@@ -335,7 +278,7 @@ def read_derivatives(path, nbasis, natoms, mu_to_atom):
         dV[atom, nu, mu, 1] = dy
         dV[atom, nu, mu, 2] = dz
 
-    # --- H. Two-electron derivatives ---
+    # H. Two-electron derivatives.
     idx = _find_index(lines, "H. Derivatives of two-electron integrals")
     nvec = int(lines[idx + 1])
     start = idx + 2

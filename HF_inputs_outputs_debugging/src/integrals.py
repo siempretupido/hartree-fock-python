@@ -1,7 +1,6 @@
 import math
 import numpy as np
 
-
 ANGSTROM_TO_BOHR = 1.8897261246257702
 
 
